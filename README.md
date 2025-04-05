@@ -10,7 +10,9 @@ List of modules:
 | [Server Client MCP/stdio Demo](./modules/converse-client-server-stdio-demo-local/)                            | Python             | This is a demo Amazon Bedrock MCP client using the converse API and a simple MCP stdio server. The sample runs locally connected with Amazon Bedrock.                          |
 | [Server Client MCP/SSE on ECS](./modules/spring-ai-agent-ecs/)                                                | Spring AI & Kotlin | Provides a sample Spring AI MCP Server that runs on ECS; which is used by a Spring AI Agent using Bedrock; which also runs on ECS and is exposed publicly via a Load Balancer. |
 | [Server Client MCP/SSE in Bedrock Converse Client w/ pgVector RAG](./modules/spring-ai-java-bedrock-mcp-rag/) | Spring AI & Java   | A Spring AI dog adoption agent built on Bedrock using PostgreSQL with pgvector for RAG, and an MCP Server for managing adoption appointments.                                  |
-| [Server MCP/SSE on ECS](./modules/spring-ai-mcp-server-ecs/)                                                  | Spring AI & Kotlin | Very basic Spring AI MCP Server over SSE running on ECS.                                                                                                                       |
+| [Server MCP/SSE on ECS](./modules/spring-ai-mcp-server-ecs/)                                                  | Spring AI & Kotlin | Very basic Spring AI MCP Server over SSE running on ECS.                                                                                        
+| [Server Client MCP/stdio Demo](https://github.com/aws-samples/sample-for-bedrock-integration-with-database-mcp-server)                                                  | Python | This sample creates an Amazon Bedrock MCP client using Converse API and RDS Postgress & SQLite database MCP Server. Helps query the database.                                                                                                                 |
+|                               |
 
 ## Security
 
