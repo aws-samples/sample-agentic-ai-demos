@@ -1,0 +1,18 @@
+FROM ghcr.io/astral-sh/uv:bookworm
+
+# Set working directory
+WORKDIR /app
+
+# Install dependencies
+COPY ./src/client-requirements.txt .
+RUN uv venv
+RUN uv pip install -r client-requirements.txt
+
+# Copy client code
+COPY ./src/client.py .
+
+# Expose port 8080
+EXPOSE 8080
+
+# Command to run the client
+CMD ["uv", "run", "client.py"]
