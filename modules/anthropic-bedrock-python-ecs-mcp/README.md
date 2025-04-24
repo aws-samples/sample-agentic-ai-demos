@@ -4,29 +4,42 @@
 
 ```mermaid
 flowchart LR
+    subgraph aws[AWS]
+        alb[Application Load Balancer]
+        
+        subgraph vpc[VPC]
+            server[MCP Server\nECS Service]
+            client[MCP Client / Bedrock Agent\nECS Service]
+        end
+        
+        subgraph services[AWS Services]
+            bedrock[Bedrock]
+        end
+    end
+    
+    internet((Internet))
+    
+    %% Connections
+    internet <--> alb
+    alb --> client
+    client <--> bedrock
+    client <--> server
 
- subgraph ClientContainer["Docker Container 1"]
-        Client["MCP Client"]
- end
+    %% Styling
+    style aws fill:#f5f5f5,stroke:#232F3E,stroke-width:2px
+    style vpc fill:#E8F4FA,stroke:#147EBA,stroke-width:2px
+    style services fill:#E8F4FA,stroke:#147EBA,stroke-width:2px
 
- subgraph ServerContainer["Docker Container 2"]
-        Server["MCP Server"]
-        Tools["Tools"]
- end
+    style alb fill:#FF9900,color:#fff,stroke:#FF9900
+    style server fill:#2196f3,color:#fff,stroke:#2196f3
+    style client fill:#2196f3,color:#fff,stroke:#2196f3
+    style bedrock fill:#FF9900,color:#fff,stroke:#FF9900
+    style internet fill:#fff,stroke:#666,stroke-width:2px
 
- subgraph s1[" "]
-        ClientContainer
-        User(("User"))
-        ServerContainer
- end
-
-    User --> Client["MCP Client"]
-    Server --> Tools
-    Client -- MCP/SSE --> Server
-
-    Tools --> n1["AWS Services"]
-    Client["MCP Client"] ----> n2["Amazon Bedrock"]
+    %% Link styling
+    linkStyle default stroke:#666,stroke-width:2px
 ```
+
 ## Prerequisites
 
 - AWS CLI configured
