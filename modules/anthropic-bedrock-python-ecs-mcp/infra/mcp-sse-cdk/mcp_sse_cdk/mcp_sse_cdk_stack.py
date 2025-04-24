@@ -257,7 +257,7 @@ class McpSseCdkStack(Stack):
             protocol=elbv2.ApplicationProtocol.HTTP,
             target_type=elbv2.TargetType.IP,
             health_check=elbv2.HealthCheck(
-                path="/actuator/health",
+                path="/health",
                 timeout=Duration.seconds(120),
                 interval=Duration.seconds(240),
             ),
