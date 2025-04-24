@@ -116,10 +116,7 @@ cdk deploy
 4. **Verify Deployment**
 ```bash
 # Get Load Balancer DNS
-export ALB_DNS=$(aws cloudformation describe-stacks \
-    --stack-name McpSseCdkStack \
-    --query 'Stacks[0].Outputs[?OutputKey==`LoadBalancerDNS`].OutputValue' \
-    --output text)
+export ALB_DNS=$(aws elbv2 describe-load-balancers --query 'LoadBalancers[*].DNSName' --output text)
 
 # Test health endpoint
 curl http://${ALB_DNS}/health
@@ -145,21 +142,6 @@ cdk destroy
 # Delete ECR images
 aws ecr delete-repository --repository-name mcp-sse --force
 ```
-
-## Security
-
-- The infrastructure deploys into private subnets with NAT Gateway
-- Security groups restrict access between components
-- IAM roles follow principle of least privilege
-- Bedrock access is restricted to specific models
-
-## Architecture
-
-- ECS Fargate for container orchestration
-- Application Load Balancer for traffic distribution
-- Service Connect for service discovery
-- CloudWatch for logging and monitoring
-- ECR for container image storage
 
 ## Troubleshooting
 
