@@ -128,6 +128,10 @@ curl http://${ALB_DNS}/health
 curl -X POST http://${ALB_DNS}/query \
     -H "Content-Type: application/json" \
     -d '{"text": "Get me a greeting for Sarah"}'
+
+# output: {"response":"I'll help you get a greeting for Sarah using the greeting function.
+#[Calling tool greeting with args {'name': 'Sarah'}]
+#Hello Sarah! 👋 Hope you're having a wonderful day!"}%
 ```
 
 ## Cleanup

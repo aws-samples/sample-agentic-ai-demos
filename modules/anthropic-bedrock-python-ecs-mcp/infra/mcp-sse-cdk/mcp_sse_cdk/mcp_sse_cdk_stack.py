@@ -273,6 +273,15 @@ class McpSseCdkStack(Stack):
             "Listener", port=80, default_target_groups=[target_group]
         )
 
+        # Dependencies
+        self.cluster.node.add_dependency(namespace)
+        server_service.node.add_dependency(namespace)
+        server_service.node.add_dependency(self.cluster)
+
+        client_service.node.add_dependency(namespace)
+        client_service.node.add_dependency(self.cluster)
+        client_service.node.add_dependency(server_service)
+
         # Output
         CfnOutput(
             self,
