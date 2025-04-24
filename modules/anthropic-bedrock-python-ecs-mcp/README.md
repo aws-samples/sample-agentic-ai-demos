@@ -1,5 +1,32 @@
 # Model Context Protocol (MCP) Service with AWS CDK
 
+## Architecture Overview
+
+```mermaid
+flowchart LR
+
+ subgraph ClientContainer["Docker Container 1"]
+        Client["MCP Client"]
+ end
+
+ subgraph ServerContainer["Docker Container 2"]
+        Server["MCP Server"]
+        Tools["Tools"]
+ end
+
+ subgraph s1[" "]
+        ClientContainer
+        User(("User"))
+        ServerContainer
+ end
+
+    User --> Client["MCP Client"]
+    Server --> Tools
+    Client -- MCP/SSE --> Server
+
+    Tools --> n1["AWS Services"]
+    Client["MCP Client"] ----> n2["Amazon Bedrock"]
+```
 ## Prerequisites
 
 - AWS CLI configured
