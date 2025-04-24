@@ -1,58 +1,135 @@
+# Model Context Protocol (MCP) Service with AWS CDK
 
-# Welcome to your CDK Python project!
+## Prerequisites
 
-This is a blank project for CDK development with Python.
+- AWS CLI configured
+- Docker installed
+- Node.js (for CDK)
+- Python 3.11+
+- UV package manager
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
-
-This project is set up like a standard Python project.  The initialization
-process also creates a virtualenv within this project, stored under the `.venv`
-directory.  To create the virtualenv it assumes that there is a `python3`
-(or `python` for Windows) executable in your path with access to the `venv`
-package. If for any reason the automatic creation of the virtualenv fails,
-you can create the virtualenv manually.
-
-To manually create a virtualenv on MacOS and Linux:
-
+## Project Structure
 ```
-$ python3 -m venv .venv
-```
-
-After the init process completes and the virtualenv is created, you can use the following
-step to activate your virtualenv.
-
-```
-$ source .venv/bin/activate
+.
+├── docker/               # Docker configurations
+├── infra/               # Infrastructure code
+│   └── mcp-sse-cdk/    # CDK application
+├── src/                 # Application code
+└── requirements.txt     # Project dependencies
 ```
 
-If you are a Windows platform, you would activate the virtualenv like this:
+## Setup Instructions
 
-```
-% .venv\Scripts\activate.bat
-```
+1. **Install Dependencies**
+```bash
+# Create and activate virtual environment
+uv venv
+source .venv/bin/activate
 
-Once the virtualenv is activated, you can install the required dependencies.
-
-```
-$ pip install -r requirements.txt
-```
-
-At this point you can now synthesize the CloudFormation template for this code.
-
-```
-$ cdk synth
+# Install project dependencies
+uv pip install -r requirements.txt
 ```
 
-To add additional dependencies, for example other CDK libraries, just add
-them to your `setup.py` file and rerun the `pip install -r requirements.txt`
-command.
+2. **Build Docker Images**
+```bash
+# Get AWS account ID
+export AWS_ACCOUNT=$(aws sts get-caller-identity --query Account --output text)
+export AWS_REGION=us-east-1
 
-## Useful commands
+# Create ECR repository if it doesn't exist
+aws ecr create-repository --repository-name mcp-sse
 
- * `cdk ls`          list all stacks in the app
- * `cdk synth`       emits the synthesized CloudFormation template
- * `cdk deploy`      deploy this stack to your default AWS account/region
- * `cdk diff`        compare deployed stack with current state
- * `cdk docs`        open CDK documentation
+# Login to ECR
+aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT}.dkr.ecr.${AWS_REGION}.amazonaws.com
 
-Enjoy!
+# Build images locally
+docker build -f docker/server/Dockerfile -t server-image .
+docker build -f docker/client/Dockerfile -t client-image .
+
+# Tag images for ECR
+docker tag server-image ${AWS_ACCOUNT}.dkr.ecr.${AWS_REGION}.amazonaws.com/mcp-sse:server-image
+docker tag client-image ${AWS_ACCOUNT}.dkr.ecr.${AWS_REGION}.amazonaws.com/mcp-sse:client-image
+
+# Push images to ECR
+docker push ${AWS_ACCOUNT}.dkr.ecr.${AWS_REGION}.amazonaws.com/mcp-sse:server-image
+docker push ${AWS_ACCOUNT}.dkr.ecr.${AWS_REGION}.amazonaws.com/mcp-sse:client-image
+```
+
+3. **Deploy Infrastructure**
+```bash
+# Navigate to CDK directory
+cd infra/mcp-sse-cdk
+
+# Install CDK dependencies
+uv pip install -r requirements.txt
+
+# Bootstrap CDK (first time only)
+cdk bootstrap
+
+# Synthesize CloudFormation template
+cdk synth
+
+# Deploy stack
+cdk deploy
+```
+
+4. **Verify Deployment**
+```bash
+# Get Load Balancer DNS
+export ALB_DNS=$(aws cloudformation describe-stacks \
+    --stack-name McpSseCdkStack \
+    --query 'Stacks[0].Outputs[?OutputKey==`LoadBalancerDNS`].OutputValue' \
+    --output text)
+
+# Test health endpoint
+curl http://${ALB_DNS}/health
+
+# Test query endpoint
+curl -X POST http://${ALB_DNS}/query \
+    -H "Content-Type: application/json" \
+    -d '{"text": "Get me a greeting for Sarah"}'
+```
+
+## Cleanup
+
+To avoid incurring charges, clean up resources:
+```bash
+# Delete CDK stack
+cd infra/mcp-sse-cdk
+cdk destroy
+
+# Delete ECR images
+aws ecr delete-repository --repository-name mcp-sse --force
+```
+
+## Security
+
+- The infrastructure deploys into private subnets with NAT Gateway
+- Security groups restrict access between components
+- IAM roles follow principle of least privilege
+- Bedrock access is restricted to specific models
+
+## Architecture
+
+- ECS Fargate for container orchestration
+- Application Load Balancer for traffic distribution
+- Service Connect for service discovery
+- CloudWatch for logging and monitoring
+- ECR for container image storage
+
+## Troubleshooting
+
+1. **Container Health Checks**
+   - Verify target group health in EC2 Console
+   - Ensure security group rules allow traffic
+
+2. **Service Connect Issues**
+   - Verify namespace creation in Cloud Map
+   - Check service discovery endpoints
+
+3. **Bedrock Access**
+   - Verify IAM role permissions
+   - Check regional endpoints
+   - Validate model ARNs
+
+For more detailed information, consult the AWS documentation or raise an issue in the repository.
