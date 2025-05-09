@@ -1,6 +1,6 @@
 # Amazon Bedrock Model Context Protocol (MCP) Demo
 
-This repository demonstrates the implementation and usage of the Model Context Protocol (MCP) with [Amazon Bedrock](https://docs.aws.amazon.com/bedrock/latest/userguide/what-is-bedrock.html?trk=64e03f01-b931-4384-846e-db0ba9fa89f5&sc_channel=code), showcasing how both client and server components can be built. The demo provides an interactive chat interface powered by AWS Bedrock, allowing users to interact with various tools and services through natural language.
+This repository demonstrates the implementation and usage of the Model Context Protocol (MCP) with [Amazon Bedrock](https://docs.aws.amazon.com/bedrock/latest/userguide/what-is-bedrock.html?trk=64e03f01-b931-4384-846e-db0ba9fa89f5&sc_channel=code), showcasing how both client and server components can be built. The demo provides an interactive chat interface powered by Amazon Bedrock, allowing users to interact with various tools and services through natural language.
 
 ## Architecture Overview
 

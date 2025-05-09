@@ -1,7 +1,7 @@
 # Sample: Spring AI with Bedrock and MCP
 
 A Spring Boot application that provides an AI-powered dog adoption service using:
-- AWS Bedrock for AI/ML capabilities
+- Amazon Bedrock for AI/ML capabilities
 - Spring AI for conversation management
 - PostgreSQL with pgvector for vector storage
 - Two services:

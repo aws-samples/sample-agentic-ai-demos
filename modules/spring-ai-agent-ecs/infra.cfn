@@ -242,7 +242,7 @@ Resources:
           FromPort: 443
           ToPort: 443
           CidrIp: 0.0.0.0/0  # Bedrock endpoints are public AWS services
-          Description: "Allow HTTPS traffic to AWS Bedrock"
+          Description: "Allow HTTPS traffic to Amazon Bedrock"
         # Allow traffic to MCP Server on port 8081
         - IpProtocol: tcp
           FromPort: 8081
