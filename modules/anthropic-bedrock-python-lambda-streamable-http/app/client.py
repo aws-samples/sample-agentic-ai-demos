@@ -12,6 +12,8 @@ import os
 
 load_dotenv()
 
+FUNCTION_URL = os.getenv('FUNCTION_URL')
+
 class LambdaMCPClient:
     def __init__(self, func_url: str):
         self.func_url = func_url
@@ -127,7 +129,7 @@ class LambdaMCPClient:
 
 
 async def main():
-    func_url = 'https://fatamcp2sr55uxqoridhqeqa6a0cflys.lambda-url.us-east-1.on.aws/'
+    func_url = FUNCTION_URL
     client = LambdaMCPClient(func_url)
     
     # List available tools
