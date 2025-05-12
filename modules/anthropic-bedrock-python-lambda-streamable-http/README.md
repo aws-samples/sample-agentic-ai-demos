@@ -1,5 +1,3 @@
-Certainly! Here's the revised README with the Lambda layer creation mentioned as a precursor:
-
 # Serverless MCP with AWS Lambda
 
 This project demonstrates how to deploy a Model Context Protocol (MCP) server as a serverless function using AWS Lambda with Function URLs. It uses the new Streamable HTTP protocol and AWS IAM authentication for security.
