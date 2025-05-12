@@ -24,7 +24,6 @@ Ensure you have created a Lambda layer containing MCP and its dependencies. You 
 
 1. Update `deploy.py`:
 ```python
-
 # Update this lines with your layer ARNs
 lambda_web_adapter_layer = "arn:aws:lambda:us-east-1:XXXXXXXX:layer"
 ```
@@ -42,9 +41,8 @@ Save the Function URL from the output.
 
 Within `client.py`:
 ```python
-async def main():
-    # Replace with your Lambda Function URL
-    func_url = 'YOUR_LAMBDA_FUNCTION_URL'
+# Replace with your Lambda Function URL
+FUNCTION_URL = os.getenv('FUNCTION_URL')
 ```
 
 Update the `func_url` with your Lambda Function URL and run:
