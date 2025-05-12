@@ -1,0 +1,19 @@
+  FastAPIFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      PackageType: Image
+      MemorySize: 512
+      Environment:
+        Variables:
+          AWS_LWA_INVOKE_MODE: RESPONSE_STREAM
+      FunctionUrlConfig:
+        AuthType: NONE
+        InvokeMode: RESPONSE_STREAM
+      Policies:
+      - Statement:
+        - Sid: BedrockInvokePolicy
+          Effect: Allow
+          Action:
+          - bedrock:InvokeModelWithResponseStream
+          - bedrock:InvokeModel
+          Resource: '*'
