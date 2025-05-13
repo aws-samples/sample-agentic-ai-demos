@@ -12,6 +12,7 @@ List of modules:
 | [Server Client MCP/SSE in Bedrock Converse Client w/ pgVector RAG](./modules/spring-ai-java-bedrock-mcp-rag/) | Spring AI & Java   | A Spring AI dog adoption agent built on Bedrock using PostgreSQL with pgvector for RAG, and an MCP Server for managing adoption appointments.                                  |
 | [Server MCP/SSE on ECS](./modules/spring-ai-mcp-server-ecs/)                                                  | Spring AI & Kotlin | Very basic Spring AI MCP Server over SSE running on ECS.                                                                                                                       |
 | [MCP/SSE Server - FastAPI Client with Anthropic Bedrock](./modules/anthropic-bedrock-python-ecs-mcp/)         | Python             | An MCP SSE server with a FastAPI client that leverages Anthropic Bedrock. The sample runs on ECS Fargate with public access through an Application Load Balancer. |
+| [MCP/StreamableHTTP Server - Client w/ Anthropic Bedrock](./modules/lambda-streamable-http-mcp/)              | Python             | An MCP server leveraging Streamable HTTP on AWS Lambda with IAM auth and a function URL                 |
 
 ## Security
 
