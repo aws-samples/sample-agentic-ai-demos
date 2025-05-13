@@ -27,7 +27,7 @@ lambda_web_adapter_layer = "arn:aws:lambda:us-east-1:XXXXXXXX:layer"
 
 2. Deploy the function:
 ```bash
-python deploy.py
+python deployment.py
 ```
 
 3. Save the Function URL from the output.
