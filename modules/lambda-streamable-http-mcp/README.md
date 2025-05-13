@@ -19,7 +19,7 @@ Ensure you have created a Lambda layer containing MCP and its dependencies. You 
 
 ## Step 2: Deploy Lambda Function
 
-1. Update `deploy.py` with your MCP layer ARN and the correct Lambda Web Adapter layer ARN for your region.
+1. Update `deployment.py` with your MCP layer ARN and the correct Lambda Web Adapter layer ARN for your region.
 ```python
 # Update this lines with your layer ARNs
 lambda_web_adapter_layer = "arn:aws:lambda:us-east-1:XXXXXXXX:layer"
