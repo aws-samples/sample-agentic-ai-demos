@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/aws-samples-sample-model-context-protocol-demos-badge.png)](https://mseep.ai/app/aws-samples-sample-model-context-protocol-demos)
+
 ## Model Context Protocol samples
 
 Collection of examples of how to use Model Context Protocol with AWS.
