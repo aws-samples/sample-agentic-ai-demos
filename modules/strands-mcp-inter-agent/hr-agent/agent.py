@@ -28,17 +28,6 @@ def health_check():
 
 @app.post("/inquire")
 async def ask_agent(request: QuestionRequest):
-    # with hr_mcp_client:
-    #     tools = hr_mcp_client.list_tools_sync()
-    #
-    #     agent = Agent(model=bedrock_model, tools=tools, callback_handler=None)
-    #
-    #     return [
-    #         content["text"]
-    #         for content in agent(request.question).message["content"]
-    #         if "text" in content
-    #     ]
-
     async def generate():
         with hr_mcp_client:
             tools = hr_mcp_client.list_tools_sync()
