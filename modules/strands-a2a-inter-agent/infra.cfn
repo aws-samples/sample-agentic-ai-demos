@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: Strands MCP Inter-Agent
+Description: Strands A2A Inter-Agent
 
 Resources:
   ApplicationVPC:
@@ -120,8 +120,8 @@ Resources:
         - FARGATE
       ExecutionRoleArn: !GetAtt ExecutionRole.Arn
       ContainerDefinitions:
-        - Name: strands-mcp-inter-agent-employee-server
-          Image: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/strands-mcp-inter-agent:latest
+        - Name: strands-a2a-inter-agent-employee-server
+          Image: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/strands-a2a-inter-agent:latest
           Command:
             - "python"
             - "employee-server/server.py"
@@ -136,7 +136,7 @@ Resources:
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: ecs
 
-  MCPClientServerTaskDefinition:
+  EmployeeAgentTaskDefinition:
     Type: AWS::ECS::TaskDefinition
     Properties:
       Family: !Sub ${AWS::StackName}-task
@@ -148,8 +148,8 @@ Resources:
       ExecutionRoleArn: !GetAtt ExecutionRole.Arn
       TaskRoleArn: !GetAtt TaskRole.Arn
       ContainerDefinitions:
-        - Name: strands-mcp-inter-agent-employee-agent
-          Image: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/strands-mcp-inter-agent:latest
+        - Name: strands-a2a-inter-agent-employee-agent
+          Image: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/strands-a2a-inter-agent:latest
           Command:
             - "python"
             - "employee-agent/agent.py"
@@ -160,6 +160,8 @@ Resources:
           Environment:
             - Name: EMPLOYEE_INFO_URL
               Value: !Sub http://mcp-server.${AWS::StackName}:8002/mcp/
+            - Name: EMPLOYEE_AGENT_URL
+              Value: !Sub http://employee-agent.${AWS::StackName}:8001/
               # todo: better way to get service url
           LogConfiguration:
             LogDriver: awslogs
@@ -168,7 +170,7 @@ Resources:
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: ecs
 
-  MCPClientTaskDefinition:
+  HRAgentTaskDefinition:
     Type: AWS::ECS::TaskDefinition
     Properties:
       Family: !Sub ${AWS::StackName}-task
@@ -180,8 +182,8 @@ Resources:
       ExecutionRoleArn: !GetAtt ExecutionRole.Arn
       TaskRoleArn: !GetAtt TaskRole.Arn
       ContainerDefinitions:
-        - Name: strands-mcp-inter-agent-hr-agent
-          Image: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/strands-mcp-inter-agent:latest
+        - Name: strands-a2a-inter-agent-hr-agent
+          Image: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/strands-a2a-inter-agent:latest
           Command:
             - "python"
             - "hr-agent/agent.py"
@@ -189,7 +191,7 @@ Resources:
             - ContainerPort: 8000
           Environment:
             - Name: EMPLOYEE_AGENT_URL
-              Value: !Sub http://mcp-client-server.${AWS::StackName}:8001/mcp/
+              Value: !Sub http://employee-agent.${AWS::StackName}:8001/
               # todo: better way to get service url
           LogConfiguration:
             LogDriver: awslogs
@@ -202,7 +204,7 @@ Resources:
     Type: AWS::ServiceDiscovery::HttpNamespace
     Properties:
       Name: !Sub ${AWS::StackName}
-      Description: "Namespace for MCP Agent services"
+      Description: "Namespace for Agent services"
 
   ServerSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -213,7 +215,7 @@ Resources:
         - FromPort: 8002
           ToPort: 8002
           IpProtocol: tcp
-          SourceSecurityGroupId: !Ref ClientServerSecurityGroup
+          SourceSecurityGroupId: !Ref EmployeeAgentSecurityGroup
 
   MCPServerECSService:
     Type: AWS::ECS::Service
@@ -240,7 +242,7 @@ Resources:
             - !Ref PrivateSubnet1
             - !Ref PrivateSubnet2
 
-  ClientServerSecurityGroup:
+  EmployeeAgentSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Security group for container
@@ -262,13 +264,13 @@ Resources:
           CidrIp: 0.0.0.0/0
           Description: "Allow traffic to MCP Server on port 8002"
 
-  MCPClientServerECSService:
+  EmployeeAgentECSService:
     Type: AWS::ECS::Service
     DependsOn: MCPServerECSService
     Properties:
       ServiceName: !Sub ${AWS::StackName}-client-server
       Cluster: !Ref ECSCluster
-      TaskDefinition: !Ref MCPClientServerTaskDefinition
+      TaskDefinition: !Ref EmployeeAgentTaskDefinition
       DesiredCount: 1
       LaunchType: FARGATE
       ServiceConnectConfiguration:
@@ -276,14 +278,14 @@ Resources:
         Namespace: !GetAtt ServiceConnectNamespace.Arn
         Services:
           - PortName: http
-            DiscoveryName: mcp-client-server
+            DiscoveryName: employee-agent
             ClientAliases:
               - Port: 8001
       NetworkConfiguration:
         AwsvpcConfiguration:
           AssignPublicIp: ENABLED
           SecurityGroups:
-            - !Ref ClientServerSecurityGroup
+            - !Ref EmployeeAgentSecurityGroup
           Subnets:
             - !Ref PrivateSubnet1
             - !Ref PrivateSubnet2
@@ -308,17 +310,17 @@ Resources:
           FromPort: 8001
           ToPort: 8001
           CidrIp: 0.0.0.0/0
-          Description: "Allow traffic to MCP Server on port 8001"
+          Description: "Allow traffic to A2A Server on port 8001"
 
-  MCPClientECSService:
+  HRAgentECSService:
     Type: AWS::ECS::Service
     DependsOn:
     - LoadBalancerListener
-    - MCPClientServerECSService
+    - EmployeeAgentECSService
     Properties:
       ServiceName: !Sub ${AWS::StackName}-client
       Cluster: !Ref ECSCluster
-      TaskDefinition: !Ref MCPClientTaskDefinition
+      TaskDefinition: !Ref HRAgentTaskDefinition
       DesiredCount: 1
       LaunchType: FARGATE
       ServiceConnectConfiguration:
@@ -333,7 +335,7 @@ Resources:
             - !Ref PrivateSubnet1
             - !Ref PrivateSubnet2
       LoadBalancers:
-        - ContainerName: "strands-mcp-inter-agent-hr-agent"
+        - ContainerName: "strands-a2a-inter-agent-hr-agent"
           ContainerPort: 8000
           LoadBalancerName: !Ref AWS::NoValue
           TargetGroupArn: !Ref TargetGroup

@@ -16,6 +16,8 @@ from strands.models import BedrockModel
 from strands.tools.mcp.mcp_client import MCPClient
 
 EMPLOYEE_INFO_URL = os.environ.get("EMPLOYEE_INFO_URL", "http://localhost:8002/mcp/")
+EMPLOYEE_AGENT_URL = os.environ.get("EMPLOYEE_AGENT_URL", "http://localhost:8001/")
+
 employee_mcp_client = MCPClient(lambda: streamablehttp_client(EMPLOYEE_INFO_URL))
 
 bedrock_model = BedrockModel(
@@ -34,7 +36,7 @@ skill = AgentSkill(
 agent_card = AgentCard(
     name="Employee Agent",
     description="Answers questions about employees",
-    url=f"http://localhost:8001/",
+    url=EMPLOYEE_AGENT_URL,
     version="0.0.1",
     defaultInputModes=["text", "text/plain"],
     defaultOutputModes=["text", "text/plain"],
@@ -92,4 +94,4 @@ server = A2AStarletteApplication(
 )
 
 if __name__ == "__main__":
-    uvicorn.run(server.build(), port=8001)
+    uvicorn.run(server.build(), host="0.0.0.0", port=8001)
