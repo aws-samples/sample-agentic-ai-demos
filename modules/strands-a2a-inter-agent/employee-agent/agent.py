@@ -7,7 +7,8 @@ from a2a.server.apps import A2AStarletteApplication
 from a2a.server.events import EventQueue
 from a2a.server.request_handlers import DefaultRequestHandler
 from a2a.server.tasks import InMemoryPushNotifier, InMemoryTaskStore
-from a2a.types import (AgentCapabilities, AgentCard, AgentSkill, TaskArtifactUpdateEvent)
+from a2a.types import (AgentCapabilities, AgentCard, AgentSkill, TaskArtifactUpdateEvent, TaskStatusUpdateEvent,
+                       TaskStatus, TaskState)
 from a2a.utils import new_text_artifact
 from mcp.client.streamable_http import streamablehttp_client
 from strands import Agent
@@ -20,7 +21,7 @@ employee_mcp_client = MCPClient(lambda: streamablehttp_client(EMPLOYEE_INFO_URL)
 bedrock_model = BedrockModel(
     model_id="amazon.nova-micro-v1:0",
     region_name="us-east-1",
-    temperature=0.9,
+    temperature=0.5,
 )
 
 skill = AgentSkill(
@@ -61,6 +62,15 @@ class EmployeeAgentExecutor(AgentExecutor):
                             name='current_result',
                             text=event["data"],
                         ),
+                    )
+                    await event_queue.enqueue_event(message)
+
+                if "contentBlockStop" in event:
+                    message = TaskStatusUpdateEvent(
+                        status=TaskStatus(state=TaskState.completed),
+                        final=True,
+                        contextId=context.context_id,
+                        taskId=context.task_id,
                     )
                     await event_queue.enqueue_event(message)
 

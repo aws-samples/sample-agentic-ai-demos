@@ -5,9 +5,9 @@ Strands A2A Inter-Agent Sample
 sequenceDiagram
     participant User
     participant REST as REST API Endpoint
-    participant Agent1 as HR Agent<br/>(with MCP Client)
-    participant Agent2 as Employee Info Agent<br/>(with MCP Client & Server)
-    participant Bedrock as Amazon Bedrock<br/>(Nova Pro)
+    participant Agent1 as HR Agent<br/>(with A2A Client)
+    participant Agent2 as Employee Info Agent<br/>(with MCP Client & A2A Server)
+    participant Bedrock as Amazon Bedrock<br/>(Nova Model)
     participant MCP_Server as MCP Server
 
     User->>REST: POST /inquire<br/>(Question about employees)

@@ -15,5 +15,5 @@ EMPLOYEES = list({emp["name"]: emp for emp in [
         "name": f"{random.choice(FIRST_NAMES)} {random.choice(LAST_NAMES)}",
         "skills": random.sample(list(SKILLS), random.randint(2, 5))
     }
-    for i in range(10)
+    for i in range(100)
 ]}.values())
