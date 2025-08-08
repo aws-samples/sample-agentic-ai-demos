@@ -1,0 +1,8 @@
+[project]
+name = "strands-mcp-inter-agent"
+version = "0.0.1"
+requires-python = ">=3.13"
+dependencies = ["mcp", "strands-agents", "bedrock-agentcore"]
+
+[dependency-groups]
+deploy = ["aws-cdk-lib", "constructs", "cdk-ecr-deployment"]

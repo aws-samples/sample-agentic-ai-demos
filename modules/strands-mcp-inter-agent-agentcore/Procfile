@@ -1,0 +1,3 @@
+employee-server: PORT=8000 python employee_server/server.py
+employee-agent: PORT=8000 python employee_agent/agent.py
+hr-agent: PORT=8080 python hr_agent/agent.py

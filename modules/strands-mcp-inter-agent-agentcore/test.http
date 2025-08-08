@@ -1,0 +1,6 @@
+POST http://localhost:8000/invocations
+Content-Type: application/json
+
+{
+  "question": "list employees that have skills related to AI programming"
+}
