@@ -2,5 +2,5 @@ POST http://localhost:8000/inquire
 Content-Type: application/json
 
 {
-  "question": "list employees that have skills related to AI programming"
+  "question": "list employees that have skills related to AI"
 }

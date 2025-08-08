@@ -48,7 +48,7 @@ uv run hr-agent/agent.py
 
 Make a request to the server REST endpoint:
 
-In IntelliJ, open the `client.http` file and run the request.
+In IntelliJ, open the `test.http` file and run the request.
 
 Or via `curl`:
 ```

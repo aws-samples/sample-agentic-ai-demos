@@ -20,18 +20,17 @@ def health_check():
     return {"status": "healthy"}
 
 bedrock_model = BedrockModel(
-    model_id="amazon.nova-micro-v1:0",
+    model_id="amazon.nova-pro-v1:0",
     region_name="us-east-1",
-    temperature=0.5,
 )
+
+provider = A2AClientToolProvider(known_agent_urls=[EMPLOYEE_AGENT_URL])
+
+agent = Agent(model=bedrock_model, tools=provider.tools, system_prompt="Use a2a agents to access information you don't otherwise have access to.")
 
 @app.post("/inquire")
 async def ask_agent(request: QuestionRequest):
     async def generate():
-        provider = A2AClientToolProvider(known_agent_urls=[EMPLOYEE_AGENT_URL])
-
-        agent = Agent(model=bedrock_model, tools=provider.tools)
-
         stream_response = agent.stream_async(request.question)
 
         async for event in stream_response:
