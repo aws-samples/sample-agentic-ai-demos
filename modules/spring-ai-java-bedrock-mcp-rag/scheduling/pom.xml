@@ -28,7 +28,7 @@
 	</scm>
 	<properties>
 		<java.version>23</java.version>
-		<spring-ai.version>1.0.0</spring-ai.version>
+		<spring-ai.version>1.0.1</spring-ai.version>
 	</properties>
 	<dependencies>
 		<dependency>
