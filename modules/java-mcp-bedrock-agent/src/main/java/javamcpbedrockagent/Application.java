@@ -69,13 +69,15 @@ public class Application {
 
 
     public static void main(String[] args) {
-        var query = "how many active connections does the tool server have?"; // no params on tool
+//        var query = "how many active connections does the tool server have?"; // no params on tool
 //        var query = "how many POST connections have been made to the tool server since it started?"; // pass param to tool
 //        var query = "how many connections have been made to the tool server since it started?"; // don't pass an optional param
+        var query = "Get employees that have skills related to Java";
 
         System.out.println(query);
 
-        var transport = HttpClientSseClientTransport.builder("https://mcp-test.jamesward.com").build();
+//        var transport = HttpClientSseClientTransport.builder("https://mcp-test.jamesward.com").build();
+        var transport = HttpClientSseClientTransport.builder("http://localhost:8082").build();
 
         try (var mcpClient = McpClient.sync(transport).build()) {
             var mcpServerInfo = mcpClient.initialize();

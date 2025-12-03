@@ -1,15 +1,14 @@
 package mcpagentspringai;
 
-import io.modelcontextprotocol.client.McpSyncClient;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;
+import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @SpringBootApplication
 public class Application {
@@ -21,9 +20,9 @@ public class Application {
 @Configuration
 class ConversationalConfiguration {
     @Bean
-    ChatClient chatClient(List<McpSyncClient> mcpSyncClients, ChatClient.Builder builder) {
+    ChatClient chatClient(ToolCallbackProvider toolCallbackProvider, ChatClient.Builder builder) {
         return builder
-                .defaultToolCallbacks(new SyncMcpToolCallbackProvider(mcpSyncClients))
+                .defaultToolCallbacks(toolCallbackProvider)
                 .build();
     }
 }
