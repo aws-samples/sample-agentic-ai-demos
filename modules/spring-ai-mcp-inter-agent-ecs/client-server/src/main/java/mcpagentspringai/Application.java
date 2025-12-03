@@ -1,13 +1,10 @@
 package mcpagentspringai;
 
 import io.modelcontextprotocol.client.McpSyncClient;
-import io.modelcontextprotocol.server.McpServerFeatures;
+import org.springaicommunity.mcp.annotation.McpTool;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.mcp.McpToolUtils;
 import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;
-import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
-import org.springframework.ai.tool.method.MethodToolCallbackProvider;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -26,18 +23,12 @@ public class Application {
 @Configuration
 class AgentConfiguration {
 
-    // Expose the tool that uses the chat client as an MCP server
-    @Bean
-    public List<McpServerFeatures.SyncToolSpecification> myToolSpecs(MyTools myTools) {
-        var toolCallbacks = List.of(MethodToolCallbackProvider.builder().toolObjects(myTools).build().getToolCallbacks());
-        return McpToolUtils.toSyncToolSpecification(toolCallbacks);
-    }
-
     // Bedrock Converse chat client with employee database MCP client
+    // The manual toolcallback creation (as opposed to automatic ToolCallbackProvider) is used to avoid having this MCP server expose the MCP client's tools as well
     @Bean
     ChatClient chatClient(List<McpSyncClient> mcpSyncClients, ChatClient.Builder builder) {
         return builder
-                .defaultToolCallbacks(new SyncMcpToolCallbackProvider(mcpSyncClients))
+                .defaultToolCallbacks(SyncMcpToolCallbackProvider.builder().mcpClients(mcpSyncClients).build())
                 .defaultSystem("abbreviate employee first names with first letter and a period")
                 .build();
     }
@@ -71,7 +62,7 @@ class MyTools {
         this.employeeQueries = employeeQueries;
     }
 
-    @Tool(description = "answers questions related to our employees")
+    @McpTool(description = "answers questions related to our employees")
     String inquire(@ToolParam(description = "the query about the employees", required = true) String question) {
         return employeeQueries.query(question);
     }

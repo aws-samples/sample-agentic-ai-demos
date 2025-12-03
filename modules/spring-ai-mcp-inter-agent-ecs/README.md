@@ -9,7 +9,7 @@ sequenceDiagram
     participant REST as REST API Endpoint
     participant Agent1 as Agent1<br/>(with MCP Client)
     participant Agent2 as Agent2<br/>(with MCP Client & Server)
-    participant Bedrock as Amazon Bedrock<br/>(Nova Pro)
+    participant Bedrock as Amazon Bedrock<br/>(Nova 2 Lite)
     participant MCP_Server as MCP Server
 
     User->>REST: POST /inquire<br/>(Question about employees)
@@ -31,8 +31,8 @@ sequenceDiagram
 
 ## Setup
 
-1. Setup Bedrock in the AWS Console, [request access to Nova Pro](https://us-east-1.console.aws.amazon.com/bedrock/home?region=us-east-1#/modelaccess)
-1. [Setup auth for local development](https://docs.aws.amazon.com/cli/v1/userguide/cli-chap-authentication.html)
+1. [Create a Bedrock Bearer token](https://us-east-1.console.aws.amazon.com/bedrock/home?region=us-east-1#/api-keys/long-term/create)
+2. Set the env var: `export AWS_BEARER_TOKEN_BEDROCK=YOUR_TOKEN`
 
 ## Run Locally
 
